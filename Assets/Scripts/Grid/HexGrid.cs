@@ -15,15 +15,14 @@ public class HexGrid : MonoBehaviour
 
     [field:SerializeField] public int BatchSize { get; set; }
 
+    [field: SerializeField] public List<TerrainType> TerrainTypes { get; set; } = new List<TerrainType>();
+
     [SerializeField] private List<HexCell> cells = new List<HexCell>();
 
     private Task<List<HexCell>> hexGenerationTask;
 
     //TODO Methods to get, change, add and remove hexes
     private Vector3 gridOrigin;
-
-    //[field: SerializeField] public GameObject HexPrefab { get; set; }
-    [field: SerializeField] public TerrainType terrainType {  get; set; }
 
     public event System.Action OnMapInfoGenerated;
     public event System.Action<float> OnCellBatchgenerated;
@@ -86,9 +85,9 @@ public class HexGrid : MonoBehaviour
                 cell.Grid = this;
                 cell.HexSize = HexSize;
                 //tmp
-                //int randomTerrainTypeIndex = rng.Next(0, rm.Instance.Terraintypes.Count);
-                //TerrainType terrain;//rm.Instance.TerrainTypes[randomTerrainTypeIndex];
-                cell.SetTerrainType(terrainType);
+                int randomTerrainTypeIndex = rng.Next(0, TerrainTypes.Count);
+                TerrainType terrain = TerrainTypes[randomTerrainTypeIndex];
+                cell.SetTerrainType(terrain);
 
                 hexCells.Add(cell);
             }

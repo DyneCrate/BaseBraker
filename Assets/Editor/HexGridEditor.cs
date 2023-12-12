@@ -8,20 +8,24 @@ public class HexGridEditor : Editor
 {
     private void OnSceneGUI()
     {
-        HexGrid hexGrid = (HexGrid)target;
-
-        for (int z = 0; z < hexGrid.Height; z++)
+        bool drawText = false;
+        if (drawText)
         {
-            for (int x = 0; x < hexGrid.Width; x++)
+            HexGrid hexGrid = (HexGrid)target;
+
+            for (int z = 0; z < hexGrid.Height; z++)
             {
-                Vector3 centrePosition = HexMetrics.Center(hexGrid.HexSize, x, z, hexGrid.Orientation) + hexGrid.transform.position;
+                for (int x = 0; x < hexGrid.Width; x++)
+                {
+                    Vector3 centrePosition = HexMetrics.Center(hexGrid.HexSize, x, z, hexGrid.Orientation) + hexGrid.transform.position;
 
-                int centerX = x;
-                int centerZ = z;
+                    int centerX = x;
+                    int centerZ = z;
 
-                Vector3 cubeCoord = HexMetrics.OffsetToCube(centerX, centerZ, hexGrid.Orientation);
-                Handles.Label(centrePosition + (Vector3.forward * 0.5f), $"[{ centerX}, { centerZ}]");
-                Handles.Label(centrePosition, $"({ cubeCoord.x}, { cubeCoord.y}, {cubeCoord.z})");
+                    Vector3 cubeCoord = HexMetrics.OffsetToCube(centerX, centerZ, hexGrid.Orientation);
+                    Handles.Label(centrePosition + (Vector3.forward * 0.5f), $"[{centerX}, {centerZ}]"); // offset coordinates
+                    Handles.Label(centrePosition, $"({cubeCoord.x}, {cubeCoord.y}, {cubeCoord.z})"); //q, r, s
+                }
             }
         }
     }

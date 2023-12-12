@@ -129,7 +129,8 @@ public class HexGridMeshGenerator : MonoBehaviour
 
         Vector2 location = HexMetrics.CoordinateToOffset(localX, localZ, hexGrid.HexSize, hexGrid.Orientation);
         Vector3 center = HexMetrics.Center(hexGrid.HexSize, (int)location.x, (int)location.y, hexGrid.Orientation);
-        Debug.Log("Right Click on hex: " + location);
+        Vector3 cube = HexMetrics.OffsetToCube(location, hexGrid.Orientation);
+        Debug.Log("Right Click on hex: " + center + " cube " + cube);
     }
 
 }
