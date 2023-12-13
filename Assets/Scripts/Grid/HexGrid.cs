@@ -16,8 +16,10 @@ public class HexGrid : MonoBehaviour
     [field:SerializeField] public int BatchSize { get; set; }
 
     [field: SerializeField] public List<TerrainType> TerrainTypes { get; set; } = new List<TerrainType>();
+    [SerializeField] private List<HexCell> Cells = new();
 
-    [SerializeField] private List<HexCell> cells = new List<HexCell>();
+    [field: SerializeField] public List<TerrainType> CellTerrainTypes { get; set; } = new List<TerrainType>();
+
 
     private Task<List<HexCell>> hexGenerationTask;
 
@@ -54,7 +56,7 @@ public class HexGrid : MonoBehaviour
     private void Start()
     {
         //StartCoroutine(GenerateHexCells());
-        hexGenerationTask = Task.Run(() => GenerateHexCellData());        
+        //hexGenerationTask = Task.Run(() => GenerateHexCellData());        
     }
 
     private void Update()
@@ -62,11 +64,43 @@ public class HexGrid : MonoBehaviour
         if ( hexGenerationTask != null && hexGenerationTask.IsCompleted)
         {
             Debug.Log("generate more cells");
-            cells = hexGenerationTask.Result;
+            Cells = hexGenerationTask.Result;
             OnMapInfoGenerated?.Invoke();
             StartCoroutine(InstantiateCells());
             hexGenerationTask = null; //dispose?
         }
+    }
+
+    public void GenerateGrid()
+    {
+        Debug.Log("all at once");
+        Cells =  GenerateHexCellData();
+        InstantiateCellsAtOnce();
+
+        {
+            CellTerrainTypes.Clear();
+            for (int i = 0; i < Cells.Count; i++)
+            {
+                CellTerrainTypes.Add(Cells[i].TerrainType);
+            }
+        }
+    }
+
+    public void ReloadTerrainType()
+    {
+        Debug.Log("Reload Terrain Types?");
+        for (int i = 0; i < Cells.Count; i++)
+        {
+            Cells[i].SetTerrainType(CellTerrainTypes[i]);
+        }
+    }
+
+    public void ReGenerateCells()
+    {
+        for (int i = this.transform.childCount; i > 0; --i)
+            DestroyImmediate(this.transform.GetChild(0).gameObject);
+        Debug.Log("ReGenerate more cells");
+        InstantiateCellsAtOnce();
     }
 
     private List<HexCell> GenerateHexCellData()
@@ -103,11 +137,11 @@ public class HexGrid : MonoBehaviour
             BatchSize = 1;
         }
         Debug.Log("Instantiating Hex Cells");
-        int totalBatches = Mathf.CeilToInt(cells.Count / BatchSize);
-        for ( int i = 0; i <cells.Count; i++)
+        int totalBatches = Mathf.CeilToInt(Cells.Count / BatchSize);
+        for ( int i = 0; i <Cells.Count; i++)
         {
             Debug.Log("Instantiating Hex Cell: " + i + " batchCount " + batchCount);
-            cells[i].CreateTerrain();
+            Cells[i].CreateTerrain();
             if (i % BatchSize == 0 && i != 0)
             {
                 Debug.Log("return Instantiating Hex Cell: " + i + " batchCount " + batchCount);
@@ -118,6 +152,16 @@ public class HexGrid : MonoBehaviour
         }
         OnCellInstancesGenerated?.Invoke();
     }
+
+    private void InstantiateCellsAtOnce()
+    {
+        Debug.Log("Instantiating Hex Cells");
+        for (int i = 0; i < Cells.Count; i++)
+        {
+            Cells[i].CreateTerrain();
+        }
+    }
+
 
     Color[] colors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta, Color.cyan };
 }

@@ -8,11 +8,11 @@ public class HexGridEditor : Editor
 {
     private void OnSceneGUI()
     {
-        bool drawText = false;
+        bool drawText = true;
         if (drawText)
         {
             HexGrid hexGrid = (HexGrid)target;
-
+            int i = 0;
             for (int z = 0; z < hexGrid.Height; z++)
             {
                 for (int x = 0; x < hexGrid.Width; x++)
@@ -21,10 +21,12 @@ public class HexGridEditor : Editor
 
                     int centerX = x;
                     int centerZ = z;
-
+                    
                     Vector3 cubeCoord = HexMetrics.OffsetToCube(centerX, centerZ, hexGrid.Orientation);
-                    Handles.Label(centrePosition + (Vector3.forward * 0.5f), $"[{centerX}, {centerZ}]"); // offset coordinates
-                    Handles.Label(centrePosition, $"({cubeCoord.x}, {cubeCoord.y}, {cubeCoord.z})"); //q, r, s
+                    //Handles.Label(centrePosition + (Vector3.forward * 0.5f), $"[{centerX}, {centerZ}]"); // offset coordinates
+                   // Handles.Label(centrePosition, $"({cubeCoord.x}, {cubeCoord.y}, {cubeCoord.z})"); //q, r, s
+                    Handles.Label(centrePosition, $"({i})"); //i
+                    i++;
                 }
             }
         }
