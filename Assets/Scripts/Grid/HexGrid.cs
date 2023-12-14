@@ -5,6 +5,11 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.Resources;
 
+/*
+ * The HexGrid defines the Map of a Scene
+ * 
+ * 
+ */
 public class HexGrid : MonoBehaviour
 {
     //TODO: Add properties for grid size, hex size and hex prefab
@@ -12,25 +17,16 @@ public class HexGrid : MonoBehaviour
     [field: SerializeField] public int Width { get; set; }
     [field: SerializeField] public int Height { get; set; }
     [field: SerializeField] public float HexSize { get; set; }
-
-    [field:SerializeField] public int BatchSize { get; set; }
-
     [field: SerializeField] public List<TerrainType> TerrainTypes { get; set; } = new List<TerrainType>();
     [SerializeField] private List<HexCell> Cells = new();
 
     [field: SerializeField] public List<TerrainType> CellTerrainTypes { get; set; } = new List<TerrainType>();
 
-
-    private Task<List<HexCell>> hexGenerationTask;
-
     //TODO Methods to get, change, add and remove hexes
-    private Vector3 gridOrigin;
-
-    public event System.Action OnMapInfoGenerated;
-    public event System.Action<float> OnCellBatchgenerated;
-
-    public event System.Action OnCellInstancesGenerated;
-
+    
+    /// <summary>
+    /// draws the map hexgrid
+    /// </summary>
     private void OnDrawGizmos()
     {
         for (int z = 0; z < Height; z++)
@@ -48,29 +44,6 @@ public class HexGrid : MonoBehaviour
             }
         }
     }
-    public void Awake()
-    {
-        gridOrigin = transform.position;
-    }
-
-    private void Start()
-    {
-        //StartCoroutine(GenerateHexCells());
-        //hexGenerationTask = Task.Run(() => GenerateHexCellData());        
-    }
-
-    private void Update()
-    {        
-        if ( hexGenerationTask != null && hexGenerationTask.IsCompleted)
-        {
-            Debug.Log("generate more cells");
-            Cells = hexGenerationTask.Result;
-            OnMapInfoGenerated?.Invoke();
-            StartCoroutine(InstantiateCells());
-            hexGenerationTask = null; //dispose?
-        }
-    }
-
     public void GenerateGrid()
     {
         Debug.Log("all at once");
@@ -85,7 +58,6 @@ public class HexGrid : MonoBehaviour
             }
         }
     }
-
     public void ReloadTerrainType()
     {
         Debug.Log("Reload Terrain Types?");
@@ -97,17 +69,22 @@ public class HexGrid : MonoBehaviour
 
     public void ReGenerateCells()
     {
-        for (int i = this.transform.childCount; i > 0; --i)
-            DestroyImmediate(this.transform.GetChild(0).gameObject);
+        ClearCells();
         Debug.Log("ReGenerate more cells");
         InstantiateCellsAtOnce();
+    }
+
+    public void ClearCells()
+    {
+        for (int i = this.transform.childCount; i > 0; --i)
+            DestroyImmediate(this.transform.GetChild(0).gameObject);
     }
 
     private List<HexCell> GenerateHexCellData()
     {
         Debug.Log("Generating Hex Cell Data");
         System.Random rng = new System.Random();
-        List<HexCell> hexCells = new List<HexCell>();
+        List<HexCell> hexCells = new();
 
         for (int z = 0; z < Height; z++)
         {
@@ -128,31 +105,6 @@ public class HexGrid : MonoBehaviour
         }
         return hexCells;
     }
-
-    private IEnumerator InstantiateCells()
-    {
-        int batchCount = 0;
-        if (BatchSize == 0)
-        {
-            BatchSize = 1;
-        }
-        Debug.Log("Instantiating Hex Cells");
-        int totalBatches = Mathf.CeilToInt(Cells.Count / BatchSize);
-        for ( int i = 0; i <Cells.Count; i++)
-        {
-            Debug.Log("Instantiating Hex Cell: " + i + " batchCount " + batchCount);
-            Cells[i].CreateTerrain();
-            if (i % BatchSize == 0 && i != 0)
-            {
-                Debug.Log("return Instantiating Hex Cell: " + i + " batchCount " + batchCount);
-                batchCount++;
-                OnCellBatchgenerated?.Invoke((float)batchCount / totalBatches);
-                yield return null;
-            }            
-        }
-        OnCellInstancesGenerated?.Invoke();
-    }
-
     private void InstantiateCellsAtOnce()
     {
         Debug.Log("Instantiating Hex Cells");
@@ -161,7 +113,6 @@ public class HexGrid : MonoBehaviour
             Cells[i].CreateTerrain();
         }
     }
-
 
     Color[] colors = new Color[] { Color.red, Color.blue, Color.green, Color.yellow, Color.magenta, Color.cyan };
 }

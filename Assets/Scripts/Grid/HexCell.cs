@@ -2,6 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*HexCells are the Container for the Grid System. Each Tile is represented through a cell
+ * the cell defines the position and type of the tile
+ * 
+ * 
+ * 
+ */
+
 [Serializable]
 public class HexCell
 {

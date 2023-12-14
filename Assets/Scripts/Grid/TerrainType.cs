@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.IO.Enumeration;
 using UnityEngine;
 
+/*
+ * As the name suggests, the object to save the terrainTypes 
+ */
+
 [CreateAssetMenu(fileName = "TerrainType", menuName = " TBS/TerrainType")]
 public class TerrainType : ScriptableObject
 {

@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+//this class is just for testing editor windows
 public class GridEditor : EditorWindow
 {
     #region member fields

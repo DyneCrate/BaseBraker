@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/*
+ * Draws the position/number of the cell in the editor
+ */
+
 [CustomEditor(typeof(HexGrid))]
 public class HexGridEditor : Editor
 {

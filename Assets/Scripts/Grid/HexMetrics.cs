@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * HexMetrics is a pure math class to convert coordinates  
+ * 
+ */
+
 public static class HexMetrics
 {
     public static float OuterRadius (float hexSize)
