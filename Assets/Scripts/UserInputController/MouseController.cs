@@ -31,6 +31,7 @@ public class MouseController : Singleton<MouseController>
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
+        Debug.Log("mouse button click");
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             if (mouseButton == 0)
